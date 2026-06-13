@@ -11,13 +11,13 @@
   "r11_dropout_03_acc": 91.83,
   "r11_dropout_05_acc": 91.6,
   "r11_best_acc": 91.83,
-  "r11_avg_epoch_time": 12.920483595132827,
+  "r11_avg_epoch_time": 13.129258334636688,
   "r11_convergence_ep": 4,
   "r18_params": 11173962,
   "r18_baseline_acc": 92.28,
   "r18_dropout_03_acc": 92.64,
   "r18_dropout_05_acc": 92.21,
   "r18_best_acc": 92.64,
-  "r18_avg_epoch_time": 24.230907011032105,
+  "r18_avg_epoch_time": 24.30997235774994,
   "r18_convergence_ep": 5
 }
