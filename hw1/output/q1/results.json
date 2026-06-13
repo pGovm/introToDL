@@ -1,0 +1,16 @@
+{
+  "seed": 42,
+  "epochs": 40,
+  "batch_size": 128,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "optimizer": "Adam",
+  "scheduler": "CosineAnnealingLR",
+  "params": 973322,
+  "original_params": 61100840,
+  "baseline_acc": 85.5,
+  "dropout_03_acc": 84.87,
+  "dropout_05_acc": 85.06,
+  "best_acc": 85.5,
+  "best_variant": "p=0.0 (baseline)"
+}

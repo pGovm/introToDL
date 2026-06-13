@@ -1,0 +1,23 @@
+{
+  "seed": 42,
+  "epochs": 40,
+  "batch_size": 128,
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "optimizer": "Adam",
+  "scheduler": "CosineAnnealingLR",
+  "r11_params": 4903242,
+  "r11_baseline_acc": 91.22,
+  "r11_dropout_03_acc": 91.83,
+  "r11_dropout_05_acc": 91.6,
+  "r11_best_acc": 91.83,
+  "r11_avg_epoch_time": 12.920483595132827,
+  "r11_convergence_ep": 4,
+  "r18_params": 11173962,
+  "r18_baseline_acc": 92.28,
+  "r18_dropout_03_acc": 92.64,
+  "r18_dropout_05_acc": 92.21,
+  "r18_best_acc": 92.64,
+  "r18_avg_epoch_time": 24.230907011032105,
+  "r18_convergence_ep": 5
+}
