@@ -281,4 +281,127 @@ A deeper architecture doesn't respond differently to dropout as the this only af
     \end{tabular}
 \end{table}
 
+ALexNet outperformed VGG-11 as seen in the table above. A possible reason for this could be the fact that VGG-11 over-pooled the spatial map constricting it to 128x1x1 which then needs to be expanded in the FC layers whereas AlexNet does not. This could result in some loss of information.
+
+\section*{\textbf{Problem 3}}
+
+\textbf{Objective:} Implement ResNet-18 from scratch, compare it against ResNet-11, and study how added depth affects performance and regularization.
+
+Both ResNet-11 and 18 share the same general architecture details, these being:
+\begin{enumerate}
+    \item The main path, as specified in the problem is, 3x3 conv, BN, ReLU, 3x3 conv, BN, skip connection.
+    \item They share the same skip path.
+    \item They both output as ReLU(main-path(x) + skip-path(x))
+    \item No bias due to batch normalization
+    \item As seen above, after every convolution layer both models go through batch normalization.
+\end{enumerate}
+
+The difference in architecture arises in the number of BasicBlocks that both have for each of their 4 stages. ResNet-11 has 1 BasicBlock for all 4 stages with 64, 128, 256, and 512 channels respectively in addition to a stride of 2 for every stage except the first, which has a stride of 1. ResNet-18 follows along in regards to channels and strides but has 2 BasicBlocks per stage.
+Moving on, these 2 models have introduced skip connections. Skip connections are the solution applied in deep neural networks to combat against the problem of the vanishing gradient. To prevent the shrinkage of the gradient during back propogation, a skip connection bypasses the 2 convolution layers completely and adds the input to the output. During the forward pass this helps get rid of learning anything unnecessary, sometimes only learning what to add to the input and sometimes learning nothing. Skip connections shine during the back passes when the gradient becomes so small, that the skip connection is always there to add something meaningful regardless of depth. There are 2 skip connections used in this problem. When the input and output are of the same spatial size and channel count, the input is directly added. When channels or stride increases the input is trasnformedto match the dimensions of the output and then added. For models like ResNet-11 and 18 that have 9 and 17 convolution layers respectively, these skip connections are crucial to ensure proper training of the models.
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3a_r11_curves.png}
+            \caption{\textbf{ResNet-11}}
+            \label{fig:3a_r11Curve}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3a_r18_curves.png}
+            \caption{\textbf{ResNet-18}}
+            \label{fig:3a_r18Curves}
+        \end{subfigure}
+        \caption{\textbf{Training Curves for Part A for both models}}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/p3a_r11_cm.png}
+            \caption{\textbf{ResNet-11}}
+            \label{fig:3a_r11Conf}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/p3a_r18_cm.png}
+            \caption{\textbf{ResNet-18}}
+            \label{fig:3a_r18Conf}
+        \end{subfigure}
+        \caption{\textbf{Training Curves for Part A for both models}}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3a_resnet_comparison.png}
+            \caption{\textbf{Comparison between ResNet Models}}
+            \label{fig:3a_rModelComp}
+    \end{center}
+\end{figure}
+
+Due to the low resolutions of the CIFAR-10 dataset, the added depth provided by ResNet-18 is not worth the cost as this is a very over-engineered solution for such broad categories that do not require all the extra information that is being provided by this model. Therefore, I believe the added depth is not wortht the cost.
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r11_cm_p03.png}
+            \caption{Drouput = 0.3}
+            \label{fig:3b_r11p03CM}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r11_cm_p05.png}
+            \caption{Drouput = 0.5}
+            \label{fig:3b_r11p05}
+        \end{subfigure}
+        \caption{Confusion Matrices for Different Dropouts for ResNet-11}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r18_cm_p03.png}
+            \caption{Drouput = 0.3}
+            \label{fig:3b_r18p03CM}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r18_cm_p05.png}
+            \caption{Drouput = 0.5}
+            \label{fig:3b_r18p05}
+        \end{subfigure}
+        \caption{Confusion Matrices for Different Dropouts for ResNet-18}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r11_dropout.png}
+            \caption{Drouput = 0.3}
+            \label{fig:3b_r11}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}{\linewidth}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_r18_dropout.png}
+            \caption{Drouput = 0.5}
+            \label{fig:3b_r18}
+        \end{subfigure}
+        \caption{Training Curves for Different Dropouts of ResNet Models}
+    \end{center}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+            \includegraphics[width=\linewidth]{../../hw1/output/q3/3b_final_comparison.png}
+            \caption{\textbf{Comparison between Cross-Model Dropouts}}
+            \label{fig:3b_modelDropComp}
+    \end{center}
+\end{figure}
+
+As discussed before, depth adds to the accuracy of the model training but the resolution of the input and the requirements also need to be taken into consideration. At the low resolution of CIFAR-10's images across such broad categories, the high depth of ResNet-18 was not required. In addition, as we move across families the architecture of each scale faster than the performance outputs that we have witnessed. In addition, the time needed to train each model should be taken into consideration. The modified AlexNet, had a reasonable baseline accuracy of 85.5\% while take around 3.5 seconds per epoch. ResNet-11 on the other hand had a standard epoch training time of 13.5 seconds for a baseline accuracy of 91.82. That means for an additional 10 seconds per epoch we only got an increase of 1.6\%. This is a sharp decline in performance over complexity of the model and the time take to train the model. Therefore, picking a suitable architecture with clear constraints is the best solution. In this case, I would suggest using the modified AlexNet.
+
 \end{document}
