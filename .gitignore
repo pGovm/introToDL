@@ -1,2 +1,8 @@
 .venv/
 hw1/data/
+*/*/*.aux
+*/*/*.fdb_latexmk
+*/*/*.fls
+*/*/*.out
+*/*/*.log
+*/*/*.synctex.gz
