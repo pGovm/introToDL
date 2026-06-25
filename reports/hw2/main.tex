@@ -1,0 +1,168 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=1.25in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{graphicx}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{fancy}
+    \renewcommand{\headrulewidth}{0pt}
+    \begin{center}
+        \vspace*{2cm}
+
+        \LARGE\textbf{University of North Carolina at Charlotte\\
+                        Department of Electrical and Computer Engineering}
+        
+        \vspace*{4cm}
+
+        Homework Report $\# 2$ \\
+        \Large\textbf{ECGR 4106 - Real-Time Machine Learning} \\
+        
+        \noindent\rule{14cm}{0.4pt}
+
+        \vspace*{3cm}
+
+        Name: Govind Menon \\
+        Student ID: 801371478 \\
+        Date: June 24, 2026 \\
+        GitHub: \href{https://github.com/pGovm/introToDL.git}{pGovM/introToDL}
+
+    \end{center}
+\end{titlepage}
+
+\section{\textbf{Problem 1}}
+\textbf{Objective}: Report and compare training loss, validation accuracy, execution time for training, and computational and mode size complexities across the three models over various lengths of sequence.
+
+\textbf{Hyper Parameters}
+\begin{itemize}
+    \item Hidden Size: 128
+    \item Epochs: 100
+    \item Learning Rate: 0.005
+    \item Sequence Lengths: 10, 20, 30
+    \item Model Types: RNN, LSTM, GRU
+\end{itemize}
+
+\subsection*{Training Loss}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Training Loss (\%)}}
+    \label{tab:finalTL}
+    \begin{tabular}{| c | c | c | c |}
+        \hline
+        Sequence Length \ Model & \textbf{RNN Model} & \textbf{LSTM Model} & \textbf{GRU Model} \\
+        \hline
+        \textbf{10} & 7.78 & 9.39 & 6.02 \\
+        \hline
+        \textbf{20} & 9.18 & 14.22 & 6.23 \\
+        \hline
+        \textbf{30} & 10.71 & 16.66 & 5.41 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+From this table we can see that the GRU model for a sequence length of 30 has the lowest training loss of 5.41\%. Therefore, increasing the sequence length helped the model train better compared to when it was training on shorter sequences. This is due to longer sequences giving the models more context. Furthermore, RNN at longer sequence lengths will face the problem of vanishing gradients, which isn't that big a problem for the LSTM and GRU models.
+
+\subsection*{\textbf{Validation Accuracy}}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Validation Accuracy (\%)}}
+    \label{tab:valAcc}
+    \begin{tabular}{| c | c | c | c |}
+        \hline
+        Sequence Length \ Model & \textbf{RNN Model} & \textbf{LSTM Model} & \textbf{GRU Model} \\
+        \hline
+        \textbf{10} & 50.52 & 48.21 & 50.94 \\
+        \hline
+        \textbf{20} & 51.58 & 49.89 & 52.21 \\
+        \hline
+        \textbf{30} & 47.15 & 48.62 & 49.68 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The GRU model performed the best at a sequence length of 20. With the increasing sequence lengths, the validation accuracies fell after a certain point. I think this indicates that past a certain sequence length the models started memorizing instead of actual learning.
+
+\subsection*{\textbf{Training Time}}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Training Time for Each Model (s)}}
+    \label{tab:trainTime}
+    \begin{tabular}{| c | c | c | c |}
+        \hline
+        Sequence Length \ Model & \textbf{RNN Model} & \textbf{LSTM Model} & \textbf{GRU Model} \\
+        \hline
+        \textbf{10} & 0.35 & 1.32 & 0.93 \\
+        \hline
+        \textbf{20} & 0.59 & 2.04 & 1.35 \\
+        \hline
+        \textbf{30} & 0.69 & 2.60 & 1.85 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+We can see that the time taken for each model to train goes in the order of RNN, GRU, and LSTM in increasing order. The reason for this correlates directly to the order of increasing gates in each model (0, 3, and 4). We also see the increasing time with the increase in sequence lengths  due to the increase amount of processing required per timestep.
+
+\subsection*{\textbf{Computational Complexity}}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{No. of Paramters for Each Model}}
+    \label{tab:paramCount}
+    \begin{tabular}{| c | c | c | c |}
+        \hline
+        Sequence Length \ Model & \textbf{RNN Model} & \textbf{LSTM Model} & \textbf{GRU Model} \\
+        \hline
+        \textbf{10} & 44,589 & 143,661 & 110,637 \\
+        \hline
+        \textbf{20} & 44,589 & 143,661 & 110,637 \\
+        \hline
+        \textbf{30} & 44,589 & 143,661 & 110,637 \\
+        \hline
+    \end{tabular}
+\end{table}\
+
+From the above table we can see that the sequence length does not affect the computational complexity for each model but rather the model itself, which in this case also correlates with how many gates each model consists of.
+
+\subsection*{\textbf{Model Size}}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Model Size (MB)}}
+    \label{tab:modelSize}
+    \begin{tabular}{| c | c |}
+        \hline
+        \textbf{RNN} & 0.170094 \\
+        \hline
+        \textbf{LSTM} & 0.548023 \\
+        \hline
+        \textbf{GRU} & 0.422047 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+With the increase in parameter count, the size of the model also increases, which is why the LSTM is the largest model and the RNN is smallest.
+
+\subsection*{\textbf{Conclusion}}
+From above, we can see that while RNN has the fastest training time and lowest number of parameters, the validation accuracy and loss of this model is not good compared to the other 2 models. In this case of GRU and LSTM, the former trains faster and is lesser in size but the latter achieves better accuracy due to the additional gate added to it which allows for better control in the model's memory (as implied in the name). This tradeoff is based on what the model needs to be trained for, speed or reliability.
+
+\section*{\textbf{Problem 2}}
+
+\subsection*{\textbf{{Part 1}}}
+The numbers for this sub-question are similar to Problem 1, with minimal changes in difference in performance. However, due to the increased length of the whole text, the training time required for both models has greatly increased which is why the number of epochs it is running for was decreased.
+\end{document}
