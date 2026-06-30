@@ -1,5 +1,5 @@
 .venv/
-hw1/data/
+*/data/
 */*/*.aux
 */*/*.fdb_latexmk
 */*/*.fls
