@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).parent
 # Common variables to use
 SOS_token = 0
 EOS_token = 1
-SEED = 42
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,7 +35,12 @@ transformer_configs = [
     {'num_layers': 4, 'nhead': 4},
 ]
 
-
+################################################
+##########   Common Hyperparameters   ##########
+################################################
+hidden_size = 128
+learning_rate = 0.005
+SEED = 42
 
 ################################################
 ############    Class Definitions   ############
