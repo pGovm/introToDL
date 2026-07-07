@@ -81,16 +81,20 @@ class TranslationDataset(Dataset):
     
 # Creating the class that creates positional encoding for the transformer
 class positionalEncoding(nn.Module):
+    encoding: torch.Tensor
+
     def __init__(self, d_model, max_len=5000):
         super(positionalEncoding, self).__init__()
         
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
         div_term = torch.exp(torch.arange(0, d_model, 2, dtype=torch.float) * (-np.log(10000.0) / d_model))
 
-        self.encoding = torch.zeros(max_len, d_model)
-        self.encoding[:, 0::2] = torch.sin(position * div_term)
-        self.encoding[:, 1::2] = torch.cos(position * div_term)
-        self.encoding = self.encoding.unsqueeze(0)
+        encoding = torch.zeros(max_len, d_model)
+        encoding[:, 0::2] = torch.sin(position * div_term)
+        encoding[:, 1::2] = torch.cos(position * div_term)
+        encoding = encoding.unsqueeze(0)
+
+        self.register_buffer('encoding', encoding)
 
     def forward(self, x):
         return x + self.encoding[:, :x.size(1)].detach()
@@ -154,7 +158,7 @@ class translationTransformer(nn.Module):
         return output
 
 ###############################################
-############    Helper Functions   ############
+#########   Common Helper Functions   #########
 ###############################################
 
 # Function to load the required files:
@@ -184,7 +188,7 @@ def vocab(translation, dataset):
         
         idx_to_chars = {i: ch for ch, i in chars_to_idx.items()}
 
-        return chars_to_idx, idx_to_chars, None
+        return unique_chars, chars_to_idx, idx_to_chars, None
     else:
         chars = sorted(list(set(dataset)))
 
@@ -192,7 +196,7 @@ def vocab(translation, dataset):
         idx_to_chars = {i: ch for i, ch in enumerate(chars)}
         encoded_text = [chars_to_idx[ch] for ch in dataset]
 
-        return chars_to_idx, idx_to_chars, encoded_text
+        return chars, chars_to_idx, idx_to_chars, encoded_text
     
 def build_loaders(dataset, batch_size):
     # Defining train/val sizes
@@ -216,6 +220,13 @@ def compute_model_size(model):
 
     return size_mb
 
+# Helper function to calculate computational complexity
+def compute_flops(model, *inputs):
+    flops, params, *_ = profile(model, inputs=inputs, verbose=False)
+    flops, params = clever_format([flops, params], "%.3f")
+
+    return flops, params
+
 # Function to compute time taken to train models
 def compute_time(start, end):
     return end - start
@@ -236,11 +247,3 @@ def plot_loss(train_losses, val_losses, title, path):
     plt.savefig(path, dpi=200, bbox_inches="tight")
 
     plt.show()
-
-# Helper function to calculate computational complexity
-def compute_flops(model, *inputs):
-    flops, params, *_ = profile(model, inputs=inputs, verbose=False)
-    flops, params = clever_format([flops, params], "%.3f")
-
-    return flops, params
-
