@@ -39,7 +39,7 @@ transformer_configs = [
 ##########   Common Hyperparameters   ##########
 ################################################
 hidden_size = 128
-learning_rate = 0.005
+learning_rate = 0.001
 SEED = 42
 
 ################################################
