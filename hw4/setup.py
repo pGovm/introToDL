@@ -227,10 +227,6 @@ def compute_flops(model, *inputs):
 
     return flops, params
 
-# Function to compute time taken to train models
-def compute_time(start, end):
-    return end - start
-
 # Helper function for plotting losses
 def plot_loss(train_losses, val_losses, title, path):
     plt.figure(figsize=(10,5))
@@ -241,6 +237,7 @@ def plot_loss(train_losses, val_losses, title, path):
     plt.xlabel('Epoch')
     plt.ylabel('Model Loss')
     plt.title(f'{title}')
+    plt.legend()
     plt.tight_layout()
 
     os.makedirs(os.path.dirname(path), exist_ok=True)
