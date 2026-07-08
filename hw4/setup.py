@@ -150,7 +150,12 @@ class translationTransformer(nn.Module):
         # Decoding target
         decoder_embedded = self.decoder_embedding(target)
         decoder_embedded = self.decoder_pos_encoder(decoder_embedded)
-        decoder_output = self.transformer_decoder(decoder_embedded, encoder_output)
+
+        # Adding a target mask to prevent cheating during training
+        tgt_len = target.size(1)
+        tgt_mask = nn.Transformer.generate_square_subsequent_mask(tgt_len).to(device)
+
+        decoder_output = self.transformer_decoder(decoder_embedded, encoder_output, tgt_mask=tgt_mask)
 
         # Transformer output
         output = self.fc(decoder_output)
