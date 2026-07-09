@@ -1,0 +1,61 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=1.25in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{graphicx}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{fancy}
+    \renewcommand{\headrulewidth}{0pt}
+    \begin{center}
+        \vspace*{2cm}
+
+        \LARGE\textbf{University of North Carolina at Charlotte\\
+                        Department of Electrical and Computer Engineering}
+        
+        \vspace*{4cm}
+
+        Homework Report $\# 4$ \\
+        \Large\textbf{ECGR 4106 - Real-Time Machine Learning} \\
+        
+        \noindent\rule{14cm}{0.4pt}
+
+        \vspace*{3cm}
+
+        Name: Govind Menon \\
+        Student ID: 801371478 \\
+        Date: July 8, 2026 \\
+        GitHub: \href{https://github.com/pGovm/introToDL.git}{pGovM/introToDL}
+
+    \end{center}
+\end{titlepage}
+
+\section{\textbf{\textbf{Hyper Parameters}}}
+These hyperparameters were shared in all 3 problems 
+
+\begin{itemize}
+    \item Hidden Size: 128
+    \item Epochs: 50
+    \item Learning Rate: 1e-4
+    \item Maximum Length of Sentence: 100
+    \item Batch Size: 1 (problems 3 & 4), 16 (problems 1 & 2)
+    \item Train/Val Split: 80/20
+    \item Random Seed: 42
+\end{itemize}
+
+\section*{\textbf{Problem 1}}
+\textbf{Objective}: Train and validate a transformer model for learning the given sequence, with sequence lengths of 10, 20, and 30. Report and compare the model metrics against the  RNN-based approach in the previous homework.
+\end{document}
