@@ -80,9 +80,7 @@ These hyperparameters were shared in all 3 problems
     \label{fig:transLen30evalCurve}
 \end{figure}
 
-
-
-\subsection*{Training Loss}
+From these evaluation curves it can be seen that for all 3 sequence lengths, the models were able to train very well with no obvious signs of overfitting, as the validation loss curve followed closely with the training loss and did not greatly diverge. One thing to note is that as the sequence lengths increase, the gap between the training and validation losses start decreasing towards the last few epochs. The following tables will go into further depth into the model metrics especially when compares to the RNN-based models that were previously trained.
 
 \begin{table}[H]
     \centering
@@ -101,7 +99,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-\subsection*{Validation Loss}
+For a sequence length of 10, the training loss of the Transformer model is significantly higher than the RNN-based models, while for the remaining sequence lengths, the Transformer model had lower training losses than all the other models except GRU. I think this is very indicative of the Transformer model being too powerful for a simple use-case as character prediction based on a couple paragraphs forcing it to waste unnecessary resources in training, while the RNN-based models were more suitable to the task.
 
 \begin{table}[H]
     \centering
@@ -120,9 +118,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-
-
-\subsection*{Validation Accuracy}
+In this table, the validation loss of the Transformer model is significantly lower than all the RNN-based models which draws a probable conclusion that while the Transformer model had a harder time learning from the dataset, it hajd less problems in overfitting the data.
 
 \begin{table}[H]
     \centering
@@ -141,7 +137,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-\subsection*{Model Complexity}
+As stated previosuly, the Transformer model has an easier time fitting the training data and learning despite it's larger training loss as indicated by the near perfect validation accuracy scores it received in contrast to the ones by the RNN-based models.
 
 \begin{table}[H]
     \centering
@@ -160,7 +156,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-\subsection*{Number of Parameters}
+This table confirms one of previous hypotheses where  I said the Transformer model is expanding too many resources on such a small dataset. To train a model with seqeuence lengths of 10, this model is using 10+ million FLOPs, which the LSTM model is only using 1.337 million FLOPs. Therefore the cost to train this model is not equivalent the less-than-perfect results we are getting from this model.
 
 \begin{table}[H]
     \centering
@@ -179,7 +175,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-\subsection*{Model Size}
+While the number  of parameters used is the same regardless of sequence length, the fact that the Transformer model is using slightly less than 10 times more parameters than the most expensive RNN-based model (LSTM) is another indicator of the Transformer model being overqualified for this use-case.
 
 \begin{table}[H]
     \centering
@@ -198,7 +194,7 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
-\subsection*{Training Time}
+This table speaks to more of the same points, we have discussed before on the overqualification of the Transformer model.
 
 \begin{table}[H]
     \centering
@@ -217,13 +213,291 @@ These hyperparameters were shared in all 3 problems
     \end{tabular}
 \end{table}
 
+Due to the increased complexity, model size, and parameters used to train the model with a Transformer architecture, the Transformer took more time to train the model on the provided data. What is interesting however is the fact that the time taken to train all 3 models was exactly the same for the Transformer which probably speaks to the architecture of this model accepting parallel inputs, while the other accest sequential inputs.
+
 \section*{\textbf{Problem 2}}
 \textbf{Objective}: Build a transformer model for the tiny Shakespeare dataset with sequence lengths of 20, 30, and 50 while exploring transformer architectures with 1, 2, and 4 transformer blocks, combined with 2 and 4 heads. Report the resulting metrics.
+
+\subsection*{\textbf{Sequence Length: 20}}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Training Loss}}
+    \label{tab:finalTLseq20p2}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.0904 & 0.0862 & 0.0947 \\
+        \hline
+        4 & 0.0791 & 0.0848 & 0.0795 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Validation Loss}}
+    \label{tab:finalVLseq20p2}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.0814 & 0.0782 & 0.0826 \\
+        \hline
+        4 & 0.0761 & 0.0790 & 0.0750 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The validation loss results shown above seem to stick close to their respective training loss numbers which implies that the models did not overfit their data in general for this sequence length and were able to generalize rather well.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Validation Accuracy}}
+    \label{tab:finalVASeq20p2}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 97.58 & 97.65 & 92.57 \\
+        \hline
+        4 & 97.72 & 97.61 & 97.72 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+This further proves my previous statement that the models had a good time generalizing and did not memorize the training data set. Of these models, the Transformer model with 1 layer and 4 heads seems to have generalized the best.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Model Compelxity (FLOPs)}}
+    \label{tab:FLOPsSeq20p2}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 10.67 & 21.179 & 42.191 \\
+        \hline
+        4 & 10.67 & 21.179 & 42.191 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+This table shows that the complexity of the models is decided by the depth, or number of layers, the Transformer model contains and that the number of Heads has no part to play in it.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Number of Parameters}}
+    \label{tab:ParamsSeq20p2}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 535.3k & 1.062M & 2.116M \\
+        \hline
+        4 & 535.3k & 1.062M & 2.116M \\
+        \hline
+    \end{tabular}
+\end{table}
+
+This table reflect the same comlusion previously stated where the number of layers reflect the computational complexity of the Transformer model and not the number of heads it contains.
+
+In conclusion, for the sequence length of 20, the Transformer had a superior performance to the LSTM and GRU, RNN-based models in all metrics of validation accuracy, loss, and training loss which could also be inferred with the increased computational complexity provid3ed by the Transformer model for such a large dataset such as the Shakespeare.
+
+This table shows that for the transformer configurations with 1 and 4 layers, their training loss is relatively similar for the same number of heads. While for 2 layers, the training loss across the heads is similar. However, it seems that the model seems to fit the data better for transformer configurations with 4 heads.
+
+
+
+The code for this problem has been running for 2 days and has still not fully completed training the model. Currently it is training for a sequence length of 50.
 
 \section*{\textbf{Problem 3}}
 \textbf{Objective}: Develop a transformer-based encoder-decoder architecture for English-to-French translation, explore the same transformer architectures of 1, 2, and 4 transformer blocks with 2 and 4 heads. Report standard model metrics combined with traditional sequence accuracy and validation bleu-4 score based on the validation set. Compare your best-performing transformer configuration against the Homework 3 RNN-based models, across all the previously mentioned metrics.
 
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Training Loss}}
+    \label{tab:finalTLp3}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.3112 & 0.1251 & 0.0845 \\
+        \hline
+        4 & 0.2280 & 0.1017 & 0.0678 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+A trend we can see emerging in the training loss, is how they decrease with the addition of another transformer layer and when there are 4 heads instead of 2. This implies that the deeper the architecture is, the more it fits the training data to the model, although it isn't clear if this has turned into overfitting yet, without looking at the validation loss values tabulated below.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Validation Loss}}
+    \label{tab:finalVLp3}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 2.4803 & 2.8646 & 3.0434 \\
+        \hline
+        4 & 2.6544 & 3.1277 & 3.1368 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The trend mentioned before seems to be acting in reverse with validation loss. This is a clear sign of overfitting for all the Transformer architecture configurations. This implies that while the model is memorizing the training data and having a hard time generalizing the same. This result is most definitely due to the small dataset the models are training on which is split even further for training and validation.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Traditional Sequence Accuracy (\%)}}
+    \label{tab:seqAccp3}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0 & 0 & 0 \\
+        \hline
+        4 & 0 & 0 & 0 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Because of the overfitting, none of the models were able to train properly and so, would not be able to translate the input French sentences properly. This is what has resulted in a consistent sequence accuracy score of 0 throughout all models.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Validation BLEU-4 Score}}
+    \label{tab:valBLEUp3}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.1909 & 0.1745 & 0.1281 \\
+        \hline
+        4 & 0.1984 & 0.1688 & 0.1355 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+We can observe a similar trend to the validation loss with these BLEU scores. This tells us that the deeper the architecture gets, the more overfitting, or memorization, takes places resulting in lower BLEU score, or, less accurately translated sentences.
+
+From these metrics, it seems that Transformer model with 1 layer and 4 heads seems to have been the best trained transformer model from the given configurations with the highest BLEU-4 score (0.1984), second-lowest  validation loss (2.6544), and a good training loss (0.228). This model was able to train the model well, was one of the least overfit models, so it memorized the least, and had the best BLEU-4 accuracy score. In the table below, I will be comparing this model with the RNN-based model (with and without attention) using the metrics above.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Comparing The Best Transformer Model With RNN-based Models for English-to-French Translation}}
+    \label{tab:eng2fraComp}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Metric \ Model & Transformer & GRU (w/o Attention) & GRU (w/ Attention) \\
+        \hline
+        Training Loss & 0.228 & 1.8756 & 1.7927 \\
+        \hline
+        Validation Loss & 2.6544 & 2.3151 & 2.582 \\
+        \hline
+        Sequence Accuracy & 0 & 0 & 0 \\
+        \hline
+        BLEU-4 Score & 0.1984 & 0.1359 & 0.1568 \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+From these values we can see the Transformer model was able to translate from english to french more accurately. With the lowest training loss among the 3 models it was also able to fit the data to the model better but also overfit the data significantly more than the other 2 models. Therefore, with a limited dataset, GRU models can generalize more effectively than a Transformer model with requires much larger training data making the GRU models more preferable for training this dataset.
+
 \section*{\textbf{Problem 4}}
 \textbf{Objective}: Repeat the same exercise as problem 3 but translate from French to English using the same dataset.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Training Loss}}
+    \label{tab:finalTLp4}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.3002 & 0.1382 & 0.0858 \\
+        \hline
+        4 & 0.2053 & 0.1053 & 0.0805 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Similar to Problem 3's training loss, with deeper architectures have lower training loss' outlining the model being able to better fit that data to the model.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Final Validation Loss}}
+    \label{tab:finalVLp4}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 2.7972 & 3.1155 & 3.2539 \\
+        \hline
+        4 & 3.0296 & 3.2315 & 3.3729 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The table above outlines the same story as Problem 3's validation loss table. One thing that is common between both these tables is that the addition of a layer causes the model to overfit the data more than the addition of heads.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Traditional Sequence Accuracy (\%)}}
+    \label{tab:seqAccp4}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0 & 0 & 0 \\
+        \hline
+        4 & 0 & 0 & 0 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Since this model is overfitting the training data, the accuracy of the translating the sentences will be very bad since this means that model is memorizing over generalizing.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Validation BLEU-4 Score}}
+    \label{tab:valBLEUp4}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Heads \ Layers & 1 & 2 & 4 \\
+        \hline
+        2 & 0.1835 & 0.1585 & 0.1273 \\
+        \hline
+        4 & 0.1551 & 0.1515 & 0.1177 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+From the table above, we can see that the shallowest architecture has the best accuracy out of all the models. The reason for this is the constant signs of model overfitting that we have been seeing for the previous model metrics.
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Comparing The Best Transformer Model With RNN-based Models for English-to-French Translation}}
+    \label{tab:fra2engComp}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        Metric \ Model & Transformer & GRU (w/o Attention) & GRU (w/ Attention) \\
+        \hline
+        Training Loss & 0.3002 & 1.874 & 1.6182 \\
+        \hline
+        Validation Loss & 2.7972 & 2.4281 & 2.5675 \\
+        \hline
+        Sequence Accuracy & 0 & 0 & 0 \\
+        \hline
+        BLEU-4 Score & 0.1835 & 0.1257 & 0.1578 \\
+        \hline 
+    \end{tabular}
+\end{table}
+
+The best performing Transformer model is the configuration with 1 layer and 2 heads. This model has the best BLEU-4 score (0.1853) with the lowest validation loss (2.7972) which means that this model has experienced the least overfitting. Comparing this model with the RNN-based models trained with and without attention, we see that the Transformer model has the best accuracy. The GRU-based model with attention has the second lowest accuracy score among the 3 and also less overfitting. So although the Transformer model has better accuracy I would use the GRU model with attention as this model has the next-best accuracy with the lesser overfitting and the second-lowest training loss.
+
+\section*{\textbf{Conclusion}}
+From the resulting trained models, the Transformer found it easier to optimize the English-to-French translation direction. Beyond the higher BLEU scores achieved in the English-to-French direction across all configurations, the models also exhibited less overfitting compared to the French-to-English direction, as evidenced by lower validation losses. Training time measurements recorded in the notebook further support this, the Transformer consistently trained faster in the English-to-French direction. Both directions achieved a 0\% in exact sequence accuracy, which is expected given the complexity of character translation with a small dataset. However, BLEU scores consistently favor English-to-French across all six configurations, confirming that the Transformer finds this direction easier to optimize. An interesting thing to note is this contrasts with the RNN-based findings from Homework 3, where French-to-English was the easier direction.
 
 \end{document}
