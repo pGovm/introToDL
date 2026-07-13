@@ -90,8 +90,7 @@ def train_model(model, train_loader, test_loader, lr, epochs):
         train_time = time.time() - start
         epoch_time += train_time
 
-        print(f'Epoch: {epoch+1}')
-        print(f'Loss: {avg_loss:.4f}    |    Time: {train_time:.3f} sec')
+        print(f'Epoch: {epoch+1}    |    Loss: {avg_loss:.4f}    |    Time: {train_time:.3f} sec')
 
     avg_epoch_time = epoch_time / epochs
     test_acc = evaluate(model=model, test_loader=test_loader, device=device)
