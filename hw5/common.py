@@ -54,7 +54,7 @@ def evaluate(model, test_loader, device):
             logits = outputs.logits if hasattr(outputs, "logits") else outputs
 
             _, predicted = torch.max(logits, 1)
-            correct = (predicted == labels).sum().item()
+            correct += (predicted == labels).sum().item()
         
         accuracy = (correct / total) * 100
 
