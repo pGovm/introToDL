@@ -1,0 +1,157 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=1.25in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{graphicx}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue}
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{fancy}
+    \renewcommand{\headrulewidth}{0pt}
+    \begin{center}
+        \vspace*{2cm}
+
+        \LARGE\textbf{University of North Carolina at Charlotte\\
+                        Department of Electrical and Computer Engineering}
+        
+        \vspace*{4cm}
+
+        Homework Report $\# 5$ \\
+        \Large\textbf{ECGR 4106 - Real-Time Machine Learning} \\
+        
+        \noindent\rule{14cm}{0.4pt}
+
+        \vspace*{3cm}
+
+        Name: Govind Menon \\
+        Student ID: 801371478 \\
+        Date: July 14, 2026 \\
+        GitHub: \href{https://github.com/pGovm/introToDL.git}{pGovM/introToDL}
+
+    \end{center}
+\end{titlepage}
+
+\section*{\textbf{Problem 1}}
+\textbf{Objective}: Design a vision transformer architecture from scratch tailored for CIFAR-100, and then analyze how different configurations impact computational complexity and performance compared to a ResNet-18 baseline.
+
+\subsection*{\textbf{\textbf{Hyper Parameters}}}
+These hyperparameters were shared in all 3 problems 
+
+\begin{itemize}
+    \item Epochs: 10
+    \item Hidden Size: 256, 512
+    \item Learning Rate: 0.001
+    \item Batch Size: 64
+    \item Image Size: 32x32
+    \item No. of Classes: 100
+    \item Patch Size: 4x4, 8x8
+    \item Transformer Blocks: 4, 8
+    \item Attention Heads: 4, 8
+\end{itemize}
+
+I ran all 16 possible configurations for the from-scratch vision transformer to just see how the changing each parameter would change the resulting model. Throughout each configuration, the per-epoch loss indicated no sign of overfitting so no early-stopping was implemented. However, the test accuracy was suspiciously low (around 1\%) for some of the configurations. So, a Cosine Annealing learning rate scheduler as well as gradient clipping was implemented to help improve these results. Out of these 16 configurations, 4 of them, as required, were chosen to be compared with the baseline ResNet-18 model. These will be listed in the table below
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Chosen Scratch ViT Configurations}}
+    \label{tab:4configs}
+    \begin{tabular}{| c || c | c | c | c |}
+        \hline
+        \textbf{Configs} & \textbf{Patch Size} & \textbf{Embedding Size} & \textbf{Transformer Blocks} & \textbf{Attention Heads} \\
+        \hline
+        \textbf{Config 1} & 4x4 & 256 & 4 & 8 \\
+        \hline
+        \textbf{Config 2} & 4x4 & 512 & 8 & 4 \\
+        \hline
+        \textbf{Config 3} & 8x8 & 256 & 4 & 8 \\
+        \hline
+        \textbf{Config 4} & 8x8 & 512 & 8 & 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The table below will show the results the pretrained ResNet-18 model trained on the CIFAR-100 dataset along with 4 configurations from the trained 16 configurations. These configurations are the following:
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Resnet-18 vs Scratch ViT Configurations}}
+    \label{tab:resnet18}
+    \begin{tabular}{| c || c | c | c | c | c |}
+        \hline
+        \textbf{Metric}            & \textbf{ResNet-18} & \textbf{Config 1} & \textbf{Config 2} & \textbf{Config 3} & \textbf{Config 4} \\
+        \hline
+        \textbf{Test Accuracy}     &        54.07       &       40.11       &       9.340       &       28.96       &       9.100       \\
+        \hline
+        \textbf{No. of Params (M)} &        11.23       &       3.214       &       25.33       &       3.239       &       25.38       \\
+        \hline
+        \textbf{FLOPs (M)}         &        370.7       &       2.935       &       18.47       &       5.029       &       18.45       \\
+        \hline
+        \textbf{Training Time (s)} &        22.80       &       23.11       &       131.9       &       14.10       &       40.23       \\
+        \hline
+    \end{tabular}
+\end{table}
+
+From the table above we see that the pretrained ResNet-18 model has the best test accuracy. Among the scratch ViT models, Config 1 has the best accuracy while Config 4 and 2 have the least accuracies. This is interesting because the latter configurations are also the only 2 to have 8 transformer blocks and an embedding size of 512. These two configurations also have similar model sizes and computational complexities. With the increase in model sizes, the test accuracies of the models also decreased. I would connect this to the size of the CIFAR-100 dataset that consists of 50k training images. With the increase in model size, the size of the dataset impedes how well the model trains. What is interesting to note is despite having a higher FLOPs count than Configs 1 and 3, 2 and 4 still have a lower test accuracy, while the baseline model with the most FLOPs has the best test accuracy. There are a couple factors that lead to this:
+\begin{itemize}
+    \item \textbf{Architecture}: ResNet-18 uses convolutional architecture compared to the ViT's attention-based architecture. Due to this, the baseline model is able to detect patterns faster within the small dataset compared to the Transformer which attends to each patch independently. This effect is exaggerated due to the small dataset both models trained on.
+    \item \textbf{Embedding Size and Transformer Blocks}: With the increase in these 2 parameters, the depth of the model, including their size, increased. However, the size of the dataset relative to model size decreased. This lead to a familiar scenario of large models trying to fit small datasets, causing the model's overall learning to plunge. Also, with the increase in blocks, the layers to backpropagate through increase which also increases the effect of exploding gradients. However, this issue was slightly dealt with with the help of learning rate scheduling and gradient clipping.
+    \item \textbf{Low epochs}: With a low number of epochs to train within, the large datasets also struggled to update their weights accurately and could not give enough attention to them.
+\end{itemize}
+
+Patch-size was an impactful a parameter when it came to testing accuracies and the per-model training times. When patch size was 4x4, the model needed more training time compared to a model with a patch size of 8x8. This occurs because the models with smaller patches, dissect an image into smaller sections which then need to be looked over. That's why in the results section, in the code, you will see that the models with a patch size of 4x4 have, in general, higher accuracies than the ones with a patch size of 8x8. The opposite will be seen in attention heads, with the increase in heads from 4 to 8, the computational complexity of the model remained the same but the testing accuracy improved greatly. This is because the increase in heads allows the model to pay more attention across the whole width of itself, allowing for better training, generalizing, and fitting of the dataset to the model.
+
+In conclusion, while the FLOPs of the model was a good indicator of how well the model would learn, the actual architecTure and the method of learning associated to the model had a more significant impact. Additionally, increasing the width of the model (embedding size) caused a greater drop in test accuracy compared to the depth (transformer blocks).
+
+\section*{\textbf{Problem 2}}
+\textbf{Objective}: Fine-tune pretrained Swin Transformer models from the Hugging Face Transformers library, specifically the Tiny and Small variants, on CIFAR-100, and compare their performance to a Swin Transformer trained from scratch.
+
+\begin{itemize}
+    \item Epochs: 5
+    \item Hidden Size: 96
+    \item Learning Rate: 0.00002, 0.001
+    \item Batch Size: 32
+    \item Image Size: 224x224
+    \item No. of Classes: 100
+    \item Patch Size: 4x4
+    \item Windows Size: 7
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Comparing Pretrained and Scratch Sliding Window Transformers}}
+    \label{tab:swinComp}
+    \begin{tabular}{| c || c | c | c |}
+        \hline
+        \textbf{Metrics}               & \textbf{Tiny} & \textbf{Small} & \textbf{Scratch} \\
+        \hline
+        \textbf{Testing Accuracy (\%)} &     62.77     &     67.04      &       22.51      \\
+        \hline
+        \textbf{No. of Parameters (M)} &     27.60     &     48.91      &       5.078      \\
+        \hline
+        \textbf{FLOPs (M)}             &     62.46     &     105.3      &       18.27      \\
+        \hline
+        \textbf{Training Time (s)}     &     190.2     &     297.9      &       353.0      \\
+        \hline
+    \end{tabular}
+\end{table}
+
+From the results above, we can see that the pretrained models significantly out-performed the scratch model. These pretrained models, as requested, also had their backbone frozen with only the head being trained. This is important because it distinguishes fine-tuning from full fine-tuning (where the backbone would also be unfrozen and updated). In both cases, the backbone starts with sturdy weights learned from ImageNet (1.2M images) with the difference being that the frozen backbone keep those weights fixed throughout training, so only the classification head adapts to CIFAR-100. The scratch model on the other hand, is training only based on CIFAR-100's 50k images over the course of 5 epochs. Therefore, compared to the scratch model, the pretrained models started the training in a better position and as such were able to produce better testing accuracies in lesser time.
+
+Between the pretrained models, we see that Swin-Small outperformed Swin-Tiny by roughly 5\%. This difference in testing accuracy also came with a slightly-less-than-double increase in model size and computational complexity. While in the previous problem, this caused the models to lower their accuracy, here this caused an increase because these are pretrained models that were trained off a dataset with 1.2M images. Therefore, the Swin model with more transformer blocks, and embedding layers was able to fit the data better due to the resulting pre-fit weights from the ImageNet dataset.
+
+While we see that the pretrained models have a better result compared to the scratch model, this ultimately falls back on the dataset these models had to train on. Additionally, since the backbone was frozen for these models, they did not have the flexibility in fitting the data compared to the scratch model which is learning purely based off the current dataset. Instead, the pretrained models tried performed based off the ImageNet images they were intitially trained on.
+
+In conclusion, while the pretrained models performed better, it was primarily due to the low number of epochs and large dataset they were trained on prior. While the scratch model retains its flexibility in learning, the pretrained models are "rigid" in the sense they can only change their head's weights to the CIFAR-100 dataset.
+\end{document}
